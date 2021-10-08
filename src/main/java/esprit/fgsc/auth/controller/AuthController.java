@@ -11,6 +11,8 @@ import esprit.fgsc.auth.payload.SignUpRequest;
 import esprit.fgsc.auth.repository.UserRepository;
 import esprit.fgsc.auth.security.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.netflix.ribbon.RibbonClient;
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,6 +27,8 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/auth")
+@FeignClient(name = "auth")
+@RibbonClient(name = "auth")
 public class AuthController {
 
     @Autowired
@@ -41,43 +45,28 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),
                         loginRequest.getPassword()
                 )
         );
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String token = tokenProvider.createToken(authentication);
-        return ResponseEntity.ok(new AuthResponse(token));
+        return ResponseEntity.ok(new AuthResponse(tokenProvider.createToken(authentication)));
     }
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-        if(userRepository.existsByEmail(signUpRequest.getEmail())) {
-            throw new BadRequestException("Email address already in use.");
-        }
-
-        // Creating user's account
+        if(userRepository.existsByEmail(signUpRequest.getEmail())) throw new BadRequestException("Email address already in use.");
         User user = new User();
         user.setName(signUpRequest.getName());
         user.setEmail(signUpRequest.getEmail());
         user.setPassword(signUpRequest.getPassword());
-        user.setProvider(AuthProvider.local);
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
+        user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         User result = userRepository.save(user);
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("/user/me")
-                .buildAndExpand(result.getId()).toUri();
-
-        return ResponseEntity.created(location)
-                .body(new ApiResponse(true, "User registered successfully@"));
+        user.setProvider(AuthProvider.local);
+        URI location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/user/me").buildAndExpand(result.getId()).toUri();
+        return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully@"));
     }
 
 }

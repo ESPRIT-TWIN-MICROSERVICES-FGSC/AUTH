@@ -29,7 +29,7 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
                 .orElse(("/"));
 
         targetUrl = UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("error", exception.getLocalizedMessage())
+                .queryParam("error.ftl", exception.getLocalizedMessage())
                 .build().toUriString();
 
         httpCookieOAuth2AuthorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
