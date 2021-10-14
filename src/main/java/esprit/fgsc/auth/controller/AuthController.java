@@ -30,18 +30,10 @@ import java.net.URI;
 @FeignClient(name = "auth")
 @RibbonClient(name = "auth")
 public class AuthController {
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private TokenProvider tokenProvider;
+    @Autowired private AuthenticationManager authenticationManager;
+    @Autowired private UserRepository userRepository;
+    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired private TokenProvider tokenProvider;
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -61,10 +53,10 @@ public class AuthController {
         User user = new User();
         user.setName(signUpRequest.getName());
         user.setEmail(signUpRequest.getEmail());
-        user.setPassword(signUpRequest.getPassword());
+//        user.setPassword(signUpRequest.getPassword());
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-        User result = userRepository.save(user);
         user.setProvider(AuthProvider.local);
+        User result = userRepository.save(user);
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/user/me").buildAndExpand(result.getId()).toUri();
         return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully@"));
     }
