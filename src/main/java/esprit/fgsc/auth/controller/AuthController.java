@@ -10,6 +10,7 @@ import esprit.fgsc.auth.payload.LoginRequest;
 import esprit.fgsc.auth.payload.SignUpRequest;
 import esprit.fgsc.auth.repository.UserRepository;
 import esprit.fgsc.auth.security.TokenProvider;
+import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.ribbon.RibbonClient;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -29,12 +30,12 @@ import java.net.URI;
 @RequestMapping("/auth")
 @FeignClient(name = "auth")
 @RibbonClient(name = "auth")
+@CrossOrigin(origins = "*")
 public class AuthController {
     @Autowired private AuthenticationManager authenticationManager;
     @Autowired private UserRepository userRepository;
     @Autowired private PasswordEncoder passwordEncoder;
     @Autowired private TokenProvider tokenProvider;
-
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
@@ -59,6 +60,13 @@ public class AuthController {
         User result = userRepository.save(user);
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/user/me").buildAndExpand(result.getId()).toUri();
         return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));
+    }
+    @GetMapping("/validate-token")
+    public String validateToken(@RequestParam String token){
+        if(tokenProvider.validateToken(token)){
+            return tokenProvider.getUserIdFromToken(token);
+        }
+        return null;
     }
 
 }
