@@ -27,7 +27,7 @@ public class MailSenderService {
         String url = returnUrl + user.getConfirmEmailToken();
         log.info("Confirm email url : {}", url);
         message.setText("Please confirm your email by following this url : <a href='"+ url + user.getConfirmEmailToken()+"'>Vodoo - Confirm password </a>");
-        // emailSender.send(message);
+        emailSender.send(message);
     }
 
     public void sendResetToken(User user, String frontReturnUrl) throws NullArgumentException, MailException {
@@ -37,7 +37,7 @@ public class MailSenderService {
         String url = frontReturnUrl + user.getPasswordResetToken() + "/" + user.getEmail();
         log.info("Reset password url : {}",url);
         message.setText("<a href='"+ url + "'> Reset password </a>");
-        // emailSender.send(message);
+        emailSender.send(message);
     }
 
     public void sendPasswordChangedEmail(User user, String remoteAddr) {
