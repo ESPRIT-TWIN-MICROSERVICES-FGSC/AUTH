@@ -5,22 +5,30 @@ import lombok.Setter;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 import java.util.Date;
+import java.util.UUID;
 
 @Document
-@JsonIgnoreProperties({"password","passwordGenerated"})
+@JsonIgnoreProperties({"password","passwordGenerated","confirmEmailToken","passwordResetToken"})
 public class User extends SecurityProperties.User {
-    @Getter @Setter private String id;
+    @MongoId(value = FieldType.OBJECT_ID) @Getter @Setter private String id;
     @Getter @Setter private Date joinDate = new Date();
     @Getter @Setter @Email @Indexed(unique=true) private String email;
     @Getter @Setter private String imageUrl;
     @Getter @Setter private Boolean emailVerified = false;
-    @NotNull @Getter @Setter private AuthProvider provider;
+    @Getter @Setter private AuthProvider provider;
     @Getter @Setter private String providerId;
+    @Getter @Setter private String confirmEmailToken = UUID.randomUUID().toString();
+    @Getter @Setter private String passwordResetToken;
+    @Getter @Setter private Instant passwordResetTime;
     public User(){
+        super();
         getRoles().add(Roles.USER.toString());
     }
 }

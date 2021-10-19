@@ -14,6 +14,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableEurekaClient
 @EnableDiscoveryClient
 @SpringBootApplication
+@FeignClient(name = "auth")
+@RibbonClient(name = "auth")
 @EnableConfigurationProperties(AppProperties.class)
 public class AuthApplication {
     public static void main(String[] args) {

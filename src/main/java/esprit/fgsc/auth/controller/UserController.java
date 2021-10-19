@@ -9,20 +9,17 @@ import esprit.fgsc.auth.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.ribbon.RibbonClient;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
 
 @RestController
-@FeignClient(name = "userinfo")
-@RibbonClient(name = "userinfo")
 @CrossOrigin(origins = "*")
 public class UserController {
     @Autowired private UserRepository userRepository;
 
-    @GetMapping("/user/me")
+    @GetMapping("/me")
     public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
         return userRepository.findById(userPrincipal.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
