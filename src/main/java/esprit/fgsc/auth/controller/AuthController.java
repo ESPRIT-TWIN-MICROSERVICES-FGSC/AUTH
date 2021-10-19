@@ -69,7 +69,7 @@ public class AuthController {
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/user/me").buildAndExpand(result.getId()).toUri();
         return ResponseEntity.created(location).body(new ApiResponse(true, "Registered successfully, please check your inbox to verify your email"));
     }
-    @PatchMapping("/confirm-email")
+    @PostMapping("/confirm-email")
     public  ResponseEntity<?> validateEmail(@RequestParam String token){
         log.info(token);
         Optional<User> potential = userRepository.findByConfirmEmailToken(token);
@@ -79,7 +79,7 @@ public class AuthController {
         userRepository.save(user);
         return ResponseEntity.ok("Email confirmed");
     }
-    @PatchMapping("/generate-pw-token")
+    @PostMapping("/generate-pw-token")
     public ResponseEntity<?> sendResetToken(@Valid @RequestBody ResetPasswordAttemptRequest attempt){
         Optional<User> possibleUser = this.userRepository.findByEmail(attempt.getEmail());
         if(!possibleUser.isPresent()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Account does not exist");
@@ -95,7 +95,7 @@ public class AuthController {
         return ResponseEntity.ok().body("Reset email sent, please check your email");
     }
 
-    @PatchMapping("/reset-pw")
+    @PostMapping("/reset-pw")
     public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest attempt, HttpServletRequest request){
         Optional<User> potential = userRepository.findByPasswordResetTokenAndEmail(attempt.getResetToken(),attempt.getEmail());
         if(!potential.isPresent()) return ResponseEntity.badRequest().body("Invalid token / email combination");
@@ -115,7 +115,7 @@ public class AuthController {
         }
         return Optional.empty();
     }
-    @PatchMapping("/logout")
+    @PostMapping("/logout")
     public void logout(){
         SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
     }
