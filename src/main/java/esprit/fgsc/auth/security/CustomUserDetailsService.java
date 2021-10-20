@@ -32,7 +32,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
     @Transactional
     public UserDetails loadUserById(String id) {
-        log.info(id);
+        log.info("ID FROM TOKEN : {}",id);
         User user = userRepository.findById(id).orElseThrow(
             () -> new ResourceNotFoundException("User", "id", id)
         );
