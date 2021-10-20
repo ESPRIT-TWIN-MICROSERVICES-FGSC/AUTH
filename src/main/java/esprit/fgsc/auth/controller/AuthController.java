@@ -116,7 +116,7 @@ public class AuthController {
         return Optional.empty();
     }
     @PostMapping("/logout")
-    public void logout(){
-        SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+    public void logout(Authentication authentication){
+        authentication.setAuthenticated(false);
     }
 }
