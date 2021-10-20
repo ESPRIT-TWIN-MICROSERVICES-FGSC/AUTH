@@ -3,7 +3,6 @@ package esprit.fgsc.auth.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNullApi;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +14,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
@@ -36,7 +34,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception ex) {
-            logger.error("Could not set user authentication in security context", ex);
+            logger.error("Could not set user authentication in security context, cause : {} , message :{}", ex.getCause(), ex.getMessage());
         }
         filterChain.doFilter(request, response);
     }
