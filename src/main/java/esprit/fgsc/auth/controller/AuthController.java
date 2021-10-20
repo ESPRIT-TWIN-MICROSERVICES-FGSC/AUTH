@@ -115,8 +115,8 @@ public class AuthController {
         }
         return Optional.empty();
     }
-//    @PostMapping("/logout")
-//    public void logout(Authentication authentication){
-//        authentication.setAuthenticated(false);
-//    }
+    @PostMapping("/logout")
+    public void logout(Authentication authentication){
+        authentication.setAuthenticated(false);
+    }
 }
