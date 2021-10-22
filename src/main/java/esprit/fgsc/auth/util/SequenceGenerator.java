@@ -1,4 +1,4 @@
-package esprit.fgsc.auth.controller;
+package esprit.fgsc.auth.util;
 
 
 import java.net.NetworkInterface;

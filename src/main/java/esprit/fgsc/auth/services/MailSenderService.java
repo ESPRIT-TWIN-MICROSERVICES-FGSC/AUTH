@@ -1,6 +1,6 @@
 package esprit.fgsc.auth.services;
 
-import esprit.fgsc.auth.model.User;
+import esprit.fgsc.auth.model.UserAccount;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.NullArgumentException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class MailSenderService {
     @Autowired private JavaMailSender emailSender;
     private final SimpleMailMessage message = new SimpleMailMessage();
 
-    public void sendConfirmEmail(User user, String returnUrl) {
+    public void sendConfirmEmail(UserAccount user, String returnUrl) {
         message.setTo(user.getEmail());
         message.setSubject("Vodoo - Email confirmation");
         String url = returnUrl + user.getConfirmEmailToken();
@@ -30,7 +30,7 @@ public class MailSenderService {
         emailSender.send(message);
     }
 
-    public void sendResetToken(User user, String frontReturnUrl) throws NullArgumentException, MailException {
+    public void sendResetToken(UserAccount user, String frontReturnUrl) throws NullArgumentException, MailException {
         if(user.getPasswordResetToken() == null) throw new NullArgumentException("Empty token");
         message.setTo(user.getEmail());
         message.setSubject("Vodoo - Password reset link");
@@ -40,7 +40,7 @@ public class MailSenderService {
         emailSender.send(message);
     }
 
-    public void sendPasswordChangedEmail(User user, String remoteAddr) {
+    public void sendPasswordChangedEmail(UserAccount user, String remoteAddr) {
         message.setTo(user.getEmail());
         message.setSubject("Vodoo - Password changed");
         message.setText("Hello "+ user.getName() + ", your password has been changed at "+user.getPasswordResetTime()+ " from the ip address :"+remoteAddr);

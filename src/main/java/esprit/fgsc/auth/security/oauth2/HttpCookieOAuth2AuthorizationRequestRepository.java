@@ -37,7 +37,7 @@ public class HttpCookieOAuth2AuthorizationRequestRepository implements Authoriza
             CookieUtils.addCookie(response, REDIRECT_URI_PARAM_COOKIE_NAME, redirectUriAfterLogin, cookieExpireSeconds);
         }
     }
-
+    @Deprecated
     @Override
     public OAuth2AuthorizationRequest removeAuthorizationRequest(HttpServletRequest request) {
         return this.loadAuthorizationRequest(request);

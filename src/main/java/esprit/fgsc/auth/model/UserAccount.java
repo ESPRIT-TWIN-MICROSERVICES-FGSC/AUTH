@@ -9,14 +9,13 @@ import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
-@Document
+@Document(value = "user")
 @JsonIgnoreProperties({"password","passwordGenerated","confirmEmailToken","passwordResetToken"})
-public class User extends SecurityProperties.User {
+public class UserAccount extends SecurityProperties.User {
     @MongoId(value = FieldType.OBJECT_ID) @Getter @Setter private String id;
     @Getter @Setter private Date joinDate = new Date();
     @Getter @Setter @Email @Indexed(unique=true) private String email;
@@ -27,7 +26,7 @@ public class User extends SecurityProperties.User {
     @Getter @Setter private String confirmEmailToken = UUID.randomUUID().toString();
     @Getter @Setter private String passwordResetToken;
     @Getter @Setter private Instant passwordResetTime;
-    public User(){
+    public UserAccount(){
         super();
         getRoles().add(Roles.USER.toString());
     }
