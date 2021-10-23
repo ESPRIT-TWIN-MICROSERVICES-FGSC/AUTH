@@ -30,7 +30,7 @@ public class UserManagementcontroller {
     public Mono<Long> count() {return usersRepository.count();}
     @GetMapping("/paginated")
     @ResponseStatus(HttpStatus.OK)
-    public Flux<UserAccount> paginated(final @RequestParam int page, final @RequestParam int size, final @RequestParam(required = false, defaultValue = "") String name) {
+    public Flux<UserAccount> paginated(final @RequestParam(required = false, defaultValue = "0") int page, final @RequestParam(required = false, defaultValue = "10") int size, final @RequestParam(required = false, defaultValue = "") String name) {
         return usersRepository.findByNameLikeOrderByJoinDateDesc(name, PageRequest.of(page, size));
     }
     @PostMapping

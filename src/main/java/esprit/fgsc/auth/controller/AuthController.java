@@ -67,7 +67,7 @@ public class AuthController {
         user.setProvider(AuthProvider.local);
         Mono<UserAccount> result = userRepository.save(user);
         mailerService.sendConfirmEmail(user, signUpRequest.getReturnUrl());
-        URI location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/user/me").buildAndExpand(result.block().getId()).toUri();
+        URI location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/user/me").buildAndExpand(result.map(UserAccount::getId)).toUri();
         return ResponseEntity.created(location).body(new ApiResponse(true, "Registered successfully, please check your inbox to verify your email"));
     }
     @PostMapping("/confirm-email")
