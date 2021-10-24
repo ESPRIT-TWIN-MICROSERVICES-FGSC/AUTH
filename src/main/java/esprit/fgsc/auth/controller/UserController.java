@@ -25,12 +25,7 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/me")
-    public UserAccount getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
-        log.info(userPrincipal.getId());
-        return userRepository.findById(userPrincipal.getId()).blockOptional()
-                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
-    }
+
 
     @Autowired
     private WebClient reactiveWebClient;

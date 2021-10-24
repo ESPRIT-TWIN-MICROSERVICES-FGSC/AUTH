@@ -1,11 +1,14 @@
 package esprit.fgsc.auth.controller;
 
 
+import esprit.fgsc.auth.exception.ResourceNotFoundException;
 import esprit.fgsc.auth.model.UserAccount;
 import esprit.fgsc.auth.model.AuthProvider;
 import esprit.fgsc.auth.payload.*;
 import esprit.fgsc.auth.repository.UserRepository;
+import esprit.fgsc.auth.security.CurrentUser;
 import esprit.fgsc.auth.security.TokenProvider;
+import esprit.fgsc.auth.security.UserPrincipal;
 import esprit.fgsc.auth.services.MailSenderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,6 +112,12 @@ public class AuthController {
         userRepository.save(user);
         mailerService.sendPasswordChangedEmail(user,request.getRemoteAddr());
         return ResponseEntity.ok("Password changed");
+    }
+    @GetMapping("/me")
+    public UserAccount getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
+        log.info(userPrincipal.getId());
+        return userRepository.findById(userPrincipal.getId()).blockOptional()
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
     }
     @GetMapping("/user-from-jwt-token")
     public Mono<UserAccount> validateToken(@RequestParam String token){
