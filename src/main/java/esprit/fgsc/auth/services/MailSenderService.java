@@ -18,9 +18,13 @@ import java.io.File;
 @Slf4j
 @Service
 public class MailSenderService {
-    @Autowired private JavaMailSender emailSender;
-    private final SimpleMailMessage message = new SimpleMailMessage();
-
+    private final JavaMailSender emailSender;
+    private final static SimpleMailMessage message = new SimpleMailMessage();
+    // TODO : SEND FROM HTML TEMPLATE
+    @Autowired
+    public MailSenderService(JavaMailSender emailSender){
+        this.emailSender = emailSender;
+    }
     public void sendConfirmEmail(UserAccount user, String returnUrl) {
         message.setTo(user.getEmail());
         message.setSubject("Vodoo - Email confirmation");
@@ -55,9 +59,14 @@ public class MailSenderService {
         helper.setSubject(subject);
         helper.setText(text);
         FileSystemResource file = new FileSystemResource(new File(pathToAttachment));
-        helper.addAttachment("Invoice", file);
+        helper.addAttachment("Attachments", file);
         emailSender.send(message);
     }
-
+    public void sendEmailAsync(String userEmail, String subject, String content) {
+        message.setTo(userEmail);
+        message.setSubject(subject);
+        message.setText(content);
+        new Thread(() -> emailSender.send(message)).start();
+    }
 
 }

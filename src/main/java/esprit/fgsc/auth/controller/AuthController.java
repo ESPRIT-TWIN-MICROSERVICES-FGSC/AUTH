@@ -31,6 +31,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
+@RequestMapping("/accounts")
 @CrossOrigin(origins = "*")
 public class AuthController {
     @Autowired private AuthenticationManager authenticationManager;
