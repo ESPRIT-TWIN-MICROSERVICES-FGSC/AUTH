@@ -19,7 +19,7 @@ import reactor.core.publisher.Flux;
 @RestController
 @CrossOrigin(origins = "*")
 public class UserController {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     @Autowired
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
