@@ -21,6 +21,7 @@ import reactor.core.publisher.Mono;
 @CrossOrigin(origins = "*")
 @FeignClient(name = "users")
 @RibbonClient(name = "users")
+@RequestMapping("/users")
 //@PreAuthorize(value="hasRole('ROLE_ADMIN')")
 public class UserManagementController {
     private final UserRepository usersRepository;
