@@ -6,6 +6,7 @@ import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger.web.*;
@@ -25,8 +26,9 @@ public class SwaggerConfig {
     }
     public static ApiInfo metadata(){
         return new ApiInfoBuilder()
-                .title("FGSC User-management microservice")
+                .title("FGSC auth & user-management microservice")
                 .description("User management microservice for Esprit Microservices project under the FGSC group")
+                .contact(new Contact("Chihab hajji", "https://github.com/chihabhajji","chihab.hajji@esprit.tn"))
                 .version("0.1")
                 .build();
     }
