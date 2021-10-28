@@ -26,13 +26,11 @@ public class AuthApplication {
     public static void main(String[] args) {
         SpringApplication.run(AuthApplication.class, args);
     }
-//    @LoadBalanced
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
     }
     @Bean
-//    @LoadBalanced
     public WebClient getWebClient(){
         return WebClient.builder().build();
     }
