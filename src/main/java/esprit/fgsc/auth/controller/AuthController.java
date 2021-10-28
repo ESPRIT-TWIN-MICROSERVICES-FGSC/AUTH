@@ -66,6 +66,7 @@ public class AuthController {
         if(Boolean.TRUE.equals(userRepository.existsByName(signUpRequest.getName()).block())) return ResponseEntity.badRequest().body(new ApiResponse(false, "Username already exists"));
         UserAccount user = new UserAccount(signUpRequest.getName(),passwordEncoder.encode(signUpRequest.getPassword()),signUpRequest.getEmail(),null,AuthProvider.local);
         Mono<UserAccount> result = userRepository.insert(user);
+        result.subscribe();
         mailerService.sendConfirmEmail(user, signUpRequest.getReturnUrl());
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/user/me").buildAndExpand(result.map(UserAccount::getId)).toUri();
         return ResponseEntity.created(location).body(new ApiResponse(true, "Registered successfully, please check your inbox to verify your email"));
@@ -77,7 +78,7 @@ public class AuthController {
         if(!potential.isPresent()) return ResponseEntity.badRequest().body("Invalid token");
         UserAccount user = potential.get();
         user.setEmailVerified(true);
-        userRepository.save(user);
+        userRepository.save(user).subscribe();
         return ResponseEntity.ok("Email confirmed");
     }
     @PostMapping("/generate-pw-token")
@@ -92,7 +93,7 @@ public class AuthController {
         } catch (MailException e){
             return ResponseEntity.internalServerError().body("Failed to send reset token");
         }
-        this.userRepository.save(user);
+        this.userRepository.save(user).subscribe();
         return ResponseEntity.ok().body("Reset email sent, please check your email");
     }
 
@@ -105,7 +106,7 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(attempt.getNewPassword()));
         user.setPasswordResetTime(Instant.now());
         user.setPasswordResetToken(null);
-        userRepository.save(user);
+        userRepository.save(user).subscribe();
         mailerService.sendPasswordChangedEmail(user,request.getRemoteAddr());
         return ResponseEntity.ok("Password changed");
     }
