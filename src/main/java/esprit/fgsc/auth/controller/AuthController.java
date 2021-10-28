@@ -64,11 +64,7 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         if(Boolean.TRUE.equals(userRepository.existsByEmail(signUpRequest.getEmail()).block())) return ResponseEntity.badRequest().body(new ApiResponse(false, "Email already exists"));
         if(Boolean.TRUE.equals(userRepository.existsByName(signUpRequest.getName()).block())) return ResponseEntity.badRequest().body(new ApiResponse(false, "Username already exists"));
-        UserAccount user = new UserAccount();
-        user.setName(signUpRequest.getName());
-        user.setEmail(signUpRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
-        user.setProvider(AuthProvider.local);
+        UserAccount user = new UserAccount(signUpRequest.getName(),passwordEncoder.encode(signUpRequest.getPassword()),signUpRequest.getEmail(),null,AuthProvider.local);
         Mono<UserAccount> result = userRepository.insert(user);
         mailerService.sendConfirmEmail(user, signUpRequest.getReturnUrl());
         URI location = ServletUriComponentsBuilder.fromCurrentContextPath().path("/user/me").buildAndExpand(result.map(UserAccount::getId)).toUri();
